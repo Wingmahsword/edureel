@@ -23,6 +23,8 @@ out/
 .vercel/
 .turbo/
 .DS_Store
+.netlify/
+deno.lock
 
 # IDE
 .vscode/
