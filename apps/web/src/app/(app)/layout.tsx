@@ -1,7 +1,8 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AppLayout({
   children,
@@ -9,6 +10,13 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   const { isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.replace("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   if (!isLoaded) {
     return (
@@ -23,9 +31,7 @@ export default function AppLayout({
     );
   }
 
-  if (!isSignedIn) {
-    redirect("/sign-in");
-  }
+  if (!isSignedIn) return null;
 
   return <>{children}</>;
 }

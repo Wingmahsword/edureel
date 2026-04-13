@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ClerkProvider, UserButton, SignInButton, SignUpButton, Show } from "@clerk/nextjs";
-import { Link } from "next/navigation";
+import { ClerkProvider, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import "./globals.css";
 
@@ -41,17 +41,17 @@ export default function RootLayout({
                   <span className="text-xl font-bold text-white">EduSpark</span>
                 </Link>
                 <div className="flex items-center space-x-4">
-                  <Show when="signed-out">
+                  <SignedOut>
                     <Link href="/sign-in">
                       <button className="text-zinc-400 hover:text-white text-sm">Sign In</button>
                     </Link>
                     <Link href="/sign-up">
                       <button className="gradient-violet text-white px-4 py-2 rounded-lg text-sm hover:opacity-90">Get Started</button>
                     </Link>
-                  </Show>
-                  <Show when="signed-in">
+                  </SignedOut>
+                  <SignedIn>
                     <UserButton afterSignOutUrl="/" />
-                  </Show>
+                  </SignedIn>
                 </div>
               </div>
             </div>
