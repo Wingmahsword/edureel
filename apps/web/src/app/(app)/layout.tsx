@@ -1,8 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
+import { Play, BookOpen, Zap, Bot, LayoutDashboard } from "lucide-react";
 
 export default function AppLayout({
   children,
@@ -11,6 +13,7 @@ export default function AppLayout({
 }) {
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -33,5 +36,37 @@ export default function AppLayout({
 
   if (!isSignedIn) return null;
 
-  return <>{children}</>;
+  const NAV = [
+    { href: "/reels", icon: <Play className="w-5 h-5" />, label: "Reels" },
+    { href: "/courses", icon: <BookOpen className="w-5 h-5" />, label: "Learn" },
+    { href: "/tasks", icon: <Zap className="w-5 h-5" />, label: "Tasks" },
+    { href: "/ai-studio", icon: <Bot className="w-5 h-5" />, label: "AI" },
+    { href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
+  ];
+
+  return (
+    <>
+      {children}
+      {/* Mobile bottom navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 z-40 flex">
+        {NAV.map(item => {
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex-1 flex flex-col items-center gap-1 py-2 text-xs transition-colors ${
+                active ? "text-violet-400" : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+      {/* Bottom padding so content doesn't hide behind mobile nav */}
+      <div className="md:hidden h-16" />
+    </>
+  );
 }
