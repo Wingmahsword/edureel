@@ -53,10 +53,7 @@ export default function RootLayout({
                       { href: "/ai-studio", icon: <Bot className="w-3.5 h-3.5" />, label: "AI Studio" },
                     ].map(item => (
                       <Link key={item.href} href={item.href}
-                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all"
-                        style={{ color: "#666" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#666"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all text-zinc-500 hover:text-white hover:bg-white/5">
                         {item.icon}{item.label}
                       </Link>
                     ))}
@@ -67,9 +64,7 @@ export default function RootLayout({
                 <div className="flex items-center gap-3">
                   <SignedOut>
                     <Link href="/sign-in">
-                      <button className="text-sm font-medium transition-colors" style={{ color: "#999" }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "#999")}>Sign In</button>
+                      <button className="text-sm font-medium transition-colors text-zinc-400 hover:text-white">Sign In</button>
                     </Link>
                     <Link href="/sign-up">
                       <button className="text-sm font-semibold px-4 py-2 rounded-xl text-white transition-opacity hover:opacity-80"

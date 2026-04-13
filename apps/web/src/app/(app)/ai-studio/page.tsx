@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Zap, Bot, Image, Code2, FileText, Sparkles, ChevronRight, RotateCcw } from "lucide-react";
+import { Send, Zap, Bot, Image, Code2, FileText, Sparkles, ChevronRight, RotateCcw, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MODELS = [

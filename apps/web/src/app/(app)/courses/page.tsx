@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, ChevronRight, Star, Clock, Users, Zap, CheckCircle2, Lock, Play, Award } from "lucide-react";
+import { BookOpen, Star, Clock, Users, Zap, CheckCircle2, Lock, Play, Award, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
