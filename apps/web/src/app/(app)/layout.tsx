@@ -48,24 +48,20 @@ export default function AppLayout({
     <>
       {children}
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 z-40 flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex"
+        style={{ background: "rgba(0,0,0,0.92)", borderTop: "1px solid #1a1a1a", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)" }}>
         {NAV.map(item => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2 text-xs transition-colors ${
-                active ? "text-violet-400" : "text-zinc-500 hover:text-zinc-300"
-              }`}
-            >
-              {item.icon}
-              <span>{item.label}</span>
+            <Link key={item.href} href={item.href}
+              className="flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-all"
+              style={{ color: active ? "#a78bfa" : "#555" }}>
+              <span style={{ color: active ? "#a78bfa" : "#555" }}>{item.icon}</span>
+              {item.label}
             </Link>
           );
         })}
       </nav>
-      {/* Bottom padding so content doesn't hide behind mobile nav */}
       <div className="md:hidden h-16" />
     </>
   );

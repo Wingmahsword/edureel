@@ -68,13 +68,13 @@ export default function AIStudioPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 pt-16">
+    <div className="min-h-screen pt-16" style={{ background: "#000" }}>
       <div className="flex h-[calc(100vh-64px)]">
 
         {/* Model selector sidebar */}
-        <div className="hidden lg:flex flex-col w-72 border-r border-zinc-800 overflow-y-auto p-4 gap-2">
+        <div className="hidden lg:flex flex-col w-72 overflow-y-auto p-4 gap-2" style={{ borderRight: "1px solid #1a1a1a" }}>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-white font-semibold text-sm">AI Models</h2>
+            <h2 className="text-[13px] font-semibold tracking-wide" style={{ color: "#666" }}>AI MODELS</h2>
             <div className="flex items-center gap-1 text-xs text-amber-400">
               <Zap className="w-3 h-3" />{userCredits}
             </div>
@@ -83,7 +83,13 @@ export default function AIStudioPage() {
             <button
               key={model.id}
               onClick={() => handleModel(model)}
-              className={`text-left p-3 rounded-xl border transition-all bg-gradient-to-br ${model.gradient} ${model.border} ${selectedModel.id === model.id ? "ring-1 ring-white/20" : ""}`}
+              className="text-left p-3 rounded-xl transition-all"
+              style={selectedModel.id === model.id
+                ? { background: "#1a1a1a", border: "1px solid #333" }
+                : { background: "#0d0d0d", border: "1px solid #1a1a1a" }
+              }
+              onMouseEnter={e => { if (selectedModel.id !== model.id) (e.currentTarget as HTMLElement).style.borderColor = "#262626"; }}
+              onMouseLeave={e => { if (selectedModel.id !== model.id) (e.currentTarget as HTMLElement).style.borderColor = "#1a1a1a"; }}
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{model.icon}</span>
@@ -101,7 +107,7 @@ export default function AIStudioPage() {
         {/* Chat area */}
         <div className="flex-1 flex flex-col">
           {/* Chat header */}
-          <div className={`flex items-center gap-3 px-4 py-3 border-b border-zinc-800 bg-gradient-to-r ${selectedModel.gradient}`}>
+          <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: "1px solid #1a1a1a", background: "#0a0a0a" }}>
             <span className="text-2xl">{selectedModel.icon}</span>
             <div>
               <h3 className="text-white font-semibold">{selectedModel.name}</h3>
@@ -117,12 +123,15 @@ export default function AIStudioPage() {
           </div>
 
           {/* Quick tools */}
-          <div className="flex gap-2 px-4 py-2 border-b border-zinc-800/50 overflow-x-auto scrollbar-none">
+          <div className="flex gap-2 px-4 py-2 overflow-x-auto scrollbar-none" style={{ borderBottom: "1px solid #111" }}>
             {TOOLS.map(tool => (
               <button
                 key={tool.label}
                 onClick={() => setInput(tool.prompt + " ")}
-                className="flex-shrink-0 flex items-center gap-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-full transition-all"
+                className="flex-shrink-0 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-all"
+                style={{ background: "#111", color: "#888", border: "1px solid #1a1a1a" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#1a1a1a"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#111"; (e.currentTarget as HTMLElement).style.color = "#888"; }}
               >
                 {tool.icon}{tool.label}
               </button>
@@ -130,7 +139,7 @@ export default function AIStudioPage() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin" style={{ background: "#000" }}>
             <AnimatePresence initial={false}>
               {messages.map((msg, i) => (
                 <motion.div
@@ -145,7 +154,8 @@ export default function AIStudioPage() {
                   <div className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "bg-violet-600 text-white rounded-tr-sm"
-                      : "bg-zinc-800 text-zinc-200 rounded-tl-sm"
+                      : "text-zinc-200 rounded-tl-sm"
+                  } style={msg.role !== "user" ? { background: "#111", border: "1px solid #1a1a1a" } : {}}
                   }`}>
                     {msg.content}
                   </div>
@@ -166,7 +176,7 @@ export default function AIStudioPage() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-zinc-800">
+          <div className="p-4" style={{ borderTop: "1px solid #1a1a1a", background: "#000" }}>
             {selectedModel.credits > 0 && (
               <div className="flex items-center gap-2 mb-2 text-xs text-amber-400">
                 <Zap className="w-3 h-3" />
@@ -180,8 +190,10 @@ export default function AIStudioPage() {
                 onKeyDown={handleKey}
                 placeholder={`Message ${selectedModel.name}…`}
                 rows={1}
-                className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-200 text-sm placeholder-zinc-500 resize-none focus:outline-none focus:border-violet-500 transition-colors max-h-32"
-                style={{ resize: "none" }}
+                className="flex-1 rounded-xl px-4 py-3 text-sm resize-none max-h-32 transition-colors"
+                style={{ background: "#0d0d0d", border: "1px solid #262626", color: "#e0e0e0", outline: "none", resize: "none" }}
+                onFocus={e => (e.currentTarget.style.borderColor = "#7c3aed")}
+                onBlur={e => (e.currentTarget.style.borderColor = "#262626")}
               />
               <button
                 onClick={handleSend}
@@ -196,7 +208,7 @@ export default function AIStudioPage() {
         </div>
 
         {/* Mobile model picker strip */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800 p-3 flex gap-2 overflow-x-auto scrollbar-none z-30">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 flex gap-2 overflow-x-auto scrollbar-none z-30" style={{ background: "rgba(0,0,0,0.92)", borderTop: "1px solid #1a1a1a", backdropFilter: "blur(24px)" }}>
           {MODELS.map(m => (
             <button
               key={m.id}

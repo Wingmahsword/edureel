@@ -1,276 +1,220 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Heart, MessageCircle, Share2, Bookmark, Volume2, VolumeX, ChevronUp, ChevronDown, Zap } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Heart, MessageCircle, Share2, Bookmark, Volume2, VolumeX, Zap, MoreHorizontal, Music2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const REELS = [
-  {
-    id: 1,
-    category: "Prompting",
-    title: "Master ChatGPT Prompting in 60 Seconds",
-    creator: "AI Guru · Sam Chen",
-    avatar: "SC",
-    description: "Learn the RACI framework for perfect prompts. Role, Action, Context, Instructions = 10x better outputs. #PromptEngineering #AI",
-    likes: 24800,
-    comments: 342,
-    shares: 1200,
-    duration: "0:58",
-    gradient: "from-violet-600 to-purple-900",
-    tags: ["#PromptEngineering", "#ChatGPT", "#AI"],
-    course: "Prompt Engineering Mastery",
-    badge: "AI Guru",
-    badgeColor: "bg-violet-500",
-  },
-  {
-    id: 2,
-    category: "Creator Course",
-    title: "Build Your First AI Agent in 2 Minutes",
-    creator: "Creator · Priya Mehta",
-    avatar: "PM",
-    description: "Step-by-step: connect LangChain to your OpenAI key, add memory, deploy. No PhD needed. #LangChain #Agent #BuildInPublic",
-    likes: 18400,
-    comments: 289,
-    shares: 940,
-    duration: "2:04",
-    gradient: "from-amber-500 to-orange-800",
-    tags: ["#LangChain", "#AIAgent", "#BuildInPublic"],
-    course: "AI Agent Development",
-    badge: "Creator",
-    badgeColor: "bg-amber-500",
-  },
-  {
-    id: 3,
-    category: "Anthropic",
-    title: "Claude's Constitutional AI Explained",
-    creator: "Anthropic Official",
-    avatar: "AN",
-    description: "How Claude stays safe and helpful. Constitutional AI trains models with human feedback on ethics, not just capability. #Claude #AnthropicAI",
-    likes: 31200,
-    comments: 512,
-    shares: 2100,
-    duration: "1:32",
-    gradient: "from-emerald-500 to-teal-900",
-    tags: ["#Claude", "#ConstitutionalAI", "#Anthropic"],
-    course: "Responsible AI Development",
-    badge: "Anthropic",
-    badgeColor: "bg-emerald-500",
-  },
-  {
-    id: 4,
-    category: "Microsoft",
-    title: "Azure OpenAI vs Direct API — Which to Use?",
-    creator: "Microsoft Learn",
-    avatar: "MS",
-    description: "Enterprise security, SLA, compliance — Azure wins for corp. Speed & simplicity — direct API wins for startups. Know your use case. #Azure #OpenAI",
-    likes: 14700,
-    comments: 201,
-    shares: 780,
-    duration: "1:15",
-    gradient: "from-blue-600 to-indigo-900",
-    tags: ["#Azure", "#OpenAI", "#Enterprise"],
-    course: "Azure AI Fundamentals",
-    badge: "Microsoft",
-    badgeColor: "bg-blue-500",
-  },
-  {
-    id: 5,
-    category: "Prompting",
-    title: "Chain-of-Thought: Why AI Gets Smarter",
-    creator: "AI Guru · Maya Patel",
-    avatar: "MP",
-    description: "Add 'Think step by step' to any prompt. Watch accuracy jump 40%. CoT unlocks hidden reasoning. #ChainOfThought #PromptTips",
-    likes: 22100,
-    comments: 398,
-    shares: 1560,
-    duration: "0:47",
-    gradient: "from-pink-600 to-rose-900",
-    tags: ["#ChainOfThought", "#PromptTips", "#LLM"],
-    course: "Advanced Prompting",
-    badge: "AI Guru",
-    badgeColor: "bg-violet-500",
-  },
+  { id: 1, category: "Prompting", title: "Master ChatGPT Prompting in 60 Seconds", creator: "Sam Chen", handle: "@aiguru.sam", avatar: "SC", avatarColor: "#7c3aed", description: "Learn the RACI framework for perfect prompts. Role, Action, Context, Instructions = 10x better outputs.", likes: 24800, comments: 342, shares: 1200, duration: "0:58", bg: "linear-gradient(180deg,#0d0d0d 0%,#1a0a2e 60%,#000 100%)", accent: "#7c3aed", tags: ["#PromptEngineering","#ChatGPT","#AI"], course: "Prompt Engineering Mastery", sound: "Original audio · Sam Chen" },
+  { id: 2, category: "Creator", title: "Build Your First AI Agent in 2 Minutes", creator: "Priya Mehta", handle: "@priya.builds", avatar: "PM", avatarColor: "#d97706", description: "Connect LangChain to your OpenAI key, add memory, deploy in minutes. No PhD required.", likes: 18400, comments: 289, shares: 940, duration: "2:04", bg: "linear-gradient(180deg,#0d0d0d 0%,#1f1200 60%,#000 100%)", accent: "#d97706", tags: ["#LangChain","#AIAgent","#BuildInPublic"], course: "AI Agent Development", sound: "Original audio · Priya Mehta" },
+  { id: 3, category: "Anthropic", title: "Claude's Constitutional AI Explained", creator: "Anthropic", handle: "@anthropic", avatar: "AN", avatarColor: "#059669", description: "How Claude stays safe and helpful. Constitutional AI trains models with human feedback on ethics.", likes: 31200, comments: 512, shares: 2100, duration: "1:32", bg: "linear-gradient(180deg,#0d0d0d 0%,#061a12 60%,#000 100%)", accent: "#059669", tags: ["#Claude","#ConstitutionalAI","#Anthropic"], course: "Responsible AI Development", sound: "Anthropic Educational Series" },
+  { id: 4, category: "Microsoft", title: "Azure OpenAI vs Direct API — Which Wins?", creator: "Microsoft Learn", handle: "@mslearn", avatar: "MS", avatarColor: "#2563eb", description: "Enterprise security, SLA, compliance — Azure wins for corp. Speed and simplicity — direct API for startups.", likes: 14700, comments: 201, shares: 780, duration: "1:15", bg: "linear-gradient(180deg,#0d0d0d 0%,#060d1f 60%,#000 100%)", accent: "#2563eb", tags: ["#Azure","#OpenAI","#Enterprise"], course: "Azure AI Fundamentals", sound: "Microsoft Learn Audio" },
+  { id: 5, category: "Prompting", title: "Chain-of-Thought: Why AI Gets Smarter", creator: "Maya Patel", handle: "@maya.ai", avatar: "MP", avatarColor: "#db2777", description: "Add 'Think step by step' to any prompt. Watch accuracy jump 40%. CoT unlocks hidden reasoning.", likes: 22100, comments: 398, shares: 1560, duration: "0:47", bg: "linear-gradient(180deg,#0d0d0d 0%,#1f0614 60%,#000 100%)", accent: "#db2777", tags: ["#ChainOfThought","#PromptTips","#LLM"], course: "Advanced Prompting", sound: "Original audio · Maya Patel" },
 ];
 
-const CATEGORIES = ["All", "Prompting", "Creator Course", "Anthropic", "Microsoft", "AI Guru"];
+const CATEGORIES = ["For You", "Prompting", "Creator", "Anthropic", "Microsoft"];
 
-export default function ReelsPage() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [liked, setLiked] = useState<Record<number, boolean>>({});
-  const [saved, setSaved] = useState<Record<number, boolean>>({});
-  const [muted, setMuted] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [showLikeAnim, setShowLikeAnim] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
 
-  const filtered = activeCategory === "All" ? REELS : REELS.filter(r => r.category === activeCategory);
-  const reel = filtered[currentIndex] ?? filtered[0];
+function ReelCard({ reel, active }: { reel: typeof REELS[0]; active: boolean }) {
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [heartAnim, setHeartAnim] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
 
-  const go = (dir: 1 | -1) => {
-    setCurrentIndex(i => Math.max(0, Math.min(filtered.length - 1, i + dir)));
-  };
-
-  const handleLike = (id: number) => {
-    setLiked(prev => ({ ...prev, [id]: !prev[id] }));
-    setShowLikeAnim(true);
-    setTimeout(() => setShowLikeAnim(false), 800);
-  };
-
-  useEffect(() => { setCurrentIndex(0); }, [activeCategory]);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowUp") go(-1);
-      if (e.key === "ArrowDown") go(1);
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [filtered.length]);
-
-  const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
-
-  if (!reel) return null;
+  const handleDoubleTap = useCallback(() => {
+    setTapCount(c => c + 1);
+    if (tapCount === 0) {
+      setTimeout(() => setTapCount(0), 300);
+    } else {
+      setLiked(true);
+      setHeartAnim(true);
+      setTimeout(() => setHeartAnim(false), 900);
+      setTapCount(0);
+    }
+  }, [tapCount]);
 
   return (
-    <div className="flex h-screen bg-zinc-950 overflow-hidden pt-16">
-      {/* Category sidebar */}
-      <div className="hidden md:flex flex-col w-44 border-r border-zinc-800 pt-6 gap-1 px-2">
-        <p className="text-xs text-zinc-500 uppercase tracking-widest px-3 mb-2">Explore</p>
+    <div
+      className="snap-item relative w-full flex-shrink-0 select-none cursor-pointer"
+      style={{ height: "calc(100vh - 64px)", background: reel.bg }}
+      onClick={handleDoubleTap}
+    >
+      {/* Subtle noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")" }} />
+
+      {/* Colored glow at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-2/3 opacity-20" style={{ background: `radial-gradient(ellipse at 50% 100%, ${reel.accent}55 0%, transparent 70%)` }} />
+
+      {/* Top: category pill */}
+      <div className="absolute top-4 left-4 z-20">
+        <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: `${reel.accent}22`, color: reel.accent, border: `1px solid ${reel.accent}44` }}>
+          {reel.category}
+        </span>
+      </div>
+
+      {/* Top right: mute + more */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+        <button onClick={e => { e.stopPropagation(); setMuted(m => !m); }} className="w-8 h-8 rounded-full glass-dark flex items-center justify-center">
+          {muted ? <VolumeX className="w-3.5 h-3.5 text-white" /> : <Volume2 className="w-3.5 h-3.5 text-white" />}
+        </button>
+        <button className="w-8 h-8 rounded-full glass-dark flex items-center justify-center">
+          <MoreHorizontal className="w-3.5 h-3.5 text-white" />
+        </button>
+      </div>
+
+      {/* Double-tap heart */}
+      <AnimatePresence>
+        {heartAnim && (
+          <motion.div initial={{ scale: 0.5, opacity: 1 }} animate={{ scale: 1.4, opacity: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.7 }}
+            className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+            <Heart className="w-28 h-28 fill-white text-white" style={{ filter: "drop-shadow(0 0 20px rgba(255,255,255,0.5))" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom overlay */}
+      <div className="absolute bottom-0 left-0 right-16 p-4 pb-6 z-10"
+        style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)" }}
+      >
+        {/* Creator */}
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold ring-2 ring-white/20"
+            style={{ background: `${reel.accent}33`, border: `2px solid ${reel.accent}` }}>
+            {reel.avatar}
+          </div>
+          <div>
+            <p className="text-white text-sm font-semibold leading-none">{reel.creator}</p>
+            <p className="text-white/50 text-xs mt-0.5">{reel.handle}</p>
+          </div>
+          <button onClick={e => e.stopPropagation()}
+            className="ml-2 text-xs font-semibold px-4 py-1 rounded-full border border-white/70 text-white hover:bg-white hover:text-black transition-all">
+            Follow
+          </button>
+        </div>
+
+        {/* Title & desc */}
+        <h3 className="text-white font-bold text-[15px] leading-snug mb-1.5">{reel.title}</h3>
+        <p className="text-white/65 text-sm leading-relaxed line-clamp-2 mb-2.5">{reel.description}</p>
+
+        {/* Tags */}
+        <p className="text-sm" style={{ color: reel.accent }}>
+          {reel.tags.join(" ")}
+        </p>
+
+        {/* Sound */}
+        <div className="flex items-center gap-1.5 mt-2.5">
+          <Music2 className="w-3 h-3 text-white/40" />
+          <span className="text-white/40 text-xs truncate">{reel.sound}</span>
+        </div>
+
+        {/* Course CTA */}
+        <button onClick={e => e.stopPropagation()}
+          className="mt-3 flex items-center gap-2 px-3 py-2 rounded-xl w-full"
+          style={{ background: `${reel.accent}18`, border: `1px solid ${reel.accent}33` }}>
+          <Zap className="w-3.5 h-3.5 flex-shrink-0" style={{ color: reel.accent }} />
+          <span className="text-white/80 text-xs">Course: <span className="text-white font-medium">{reel.course}</span></span>
+          <span className="ml-auto text-xs font-medium" style={{ color: reel.accent }}>Enroll →</span>
+        </button>
+      </div>
+
+      {/* Right action bar */}
+      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-20">
+        <button onClick={e => { e.stopPropagation(); setLiked(l => !l); }} className="flex flex-col items-center gap-1">
+          <motion.div whileTap={{ scale: 1.3 }} className="w-10 h-10 rounded-full glass-dark flex items-center justify-center">
+            <Heart className={`w-5 h-5 transition-colors ${liked ? "fill-red-500 text-red-500" : "text-white"}`} />
+          </motion.div>
+          <span className="text-white text-[11px] font-medium">{fmt(reel.likes + (liked ? 1 : 0))}</span>
+        </button>
+
+        <button onClick={e => e.stopPropagation()} className="flex flex-col items-center gap-1">
+          <motion.div whileTap={{ scale: 1.2 }} className="w-10 h-10 rounded-full glass-dark flex items-center justify-center">
+            <MessageCircle className="w-5 h-5 text-white" />
+          </motion.div>
+          <span className="text-white text-[11px] font-medium">{fmt(reel.comments)}</span>
+        </button>
+
+        <button onClick={e => e.stopPropagation()} className="flex flex-col items-center gap-1">
+          <motion.div whileTap={{ scale: 1.2 }} className="w-10 h-10 rounded-full glass-dark flex items-center justify-center">
+            <Share2 className="w-5 h-5 text-white" />
+          </motion.div>
+          <span className="text-white text-[11px] font-medium">{fmt(reel.shares)}</span>
+        </button>
+
+        <button onClick={e => { e.stopPropagation(); setSaved(s => !s); }} className="flex flex-col items-center gap-1">
+          <motion.div whileTap={{ scale: 1.2 }} className="w-10 h-10 rounded-full glass-dark flex items-center justify-center">
+            <Bookmark className={`w-5 h-5 transition-colors ${saved ? "fill-white text-white" : "text-white"}`} />
+          </motion.div>
+        </button>
+
+        {/* Spinning album art */}
+        <div className="w-9 h-9 rounded-full ring-2 ring-white/20 overflow-hidden flex items-center justify-center"
+          style={{ background: `${reel.accent}33`, animation: active ? "spin 4s linear infinite" : "none" }}>
+          <Music2 className="w-4 h-4 text-white/60" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ReelsPage() {
+  const [activeCategory, setActiveCategory] = useState("For You");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const filtered = activeCategory === "For You" ? REELS : REELS.filter(r => r.category === activeCategory);
+
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const idx = Math.round(scrollRef.current.scrollTop / (window.innerHeight - 64));
+    setActiveIdx(idx);
+  }, []);
+
+  return (
+    <div className="flex h-screen bg-black overflow-hidden pt-16">
+      {/* Desktop left sidebar */}
+      <div className="hidden lg:flex flex-col w-52 border-r pt-8 gap-0.5 px-3" style={{ borderColor: "#1a1a1a" }}>
+        <p className="text-[11px] font-semibold tracking-widest px-3 mb-3" style={{ color: "#666" }}>EXPLORE</p>
         {CATEGORIES.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`text-left px-3 py-2 rounded-lg text-sm transition-all ${
-              activeCategory === cat
-                ? "bg-violet-600/20 text-violet-400 font-medium"
-                : "text-zinc-400 hover:text-white hover:bg-zinc-800"
-            }`}
-          >
+          <button key={cat} onClick={() => setActiveCategory(cat)}
+            className="text-left px-3 py-2.5 rounded-xl text-sm transition-all"
+            style={activeCategory === cat
+              ? { background: "rgba(124,58,237,0.12)", color: "#a78bfa" }
+              : { color: "#666" }
+            }>
+            {activeCategory === cat && <span className="inline-block w-1 h-1 rounded-full bg-violet-500 mr-2 mb-0.5" />}
             {cat}
           </button>
         ))}
       </div>
 
-      {/* Reel viewer */}
-      <div className="flex-1 flex items-center justify-center relative overflow-hidden">
-        {/* Reel card */}
-        <div
-          ref={containerRef}
-          className={`relative w-full max-w-sm h-[calc(100vh-64px)] bg-gradient-to-b ${reel.gradient} flex flex-col justify-end overflow-hidden select-none`}
-          onDoubleClick={() => handleLike(reel.id)}
-        >
-          {/* Animated BG pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full bg-white blur-2xl animate-pulse delay-700" />
-          </div>
-
-          {/* Top bar */}
-          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-            <span className={`text-xs px-2 py-1 rounded-full text-white font-medium ${reel.badgeColor}`}>
-              {reel.badge}
-            </span>
-            <span className="text-xs text-white/70 bg-black/30 px-2 py-1 rounded-full backdrop-blur-sm">
-              {reel.duration}
-            </span>
-          </div>
-
-          {/* Center play indicator */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center">
-              <div className="w-0 h-0 border-t-8 border-b-8 border-l-16 border-t-transparent border-b-transparent border-l-white ml-1" style={{borderLeftWidth: '20px'}} />
-            </div>
-          </div>
-
-          {/* Double-tap heart animation */}
-          {showLikeAnim && (
-            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-              <Heart className="w-24 h-24 text-white fill-white animate-ping opacity-80" />
-            </div>
-          )}
-
-          {/* Bottom content */}
-          <div className="relative z-10 p-4 pb-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-24">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xs font-bold">
-                {reel.avatar}
-              </div>
-              <span className="text-white text-sm font-medium">{reel.creator}</span>
-              <button className="ml-auto text-xs border border-white/60 text-white px-3 py-0.5 rounded-full hover:bg-white hover:text-black transition-all">
-                Follow
-              </button>
-            </div>
-            <h3 className="text-white font-bold text-base mb-1">{reel.title}</h3>
-            <p className="text-white/70 text-sm line-clamp-2 mb-2">{reel.description}</p>
-            <div className="flex gap-2 flex-wrap">
-              {reel.tags.map(t => (
-                <span key={t} className="text-xs text-white/60">{t}</span>
-              ))}
-            </div>
-            <div className="mt-3 flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-white/80 text-xs">From: <span className="text-white font-medium">{reel.course}</span></span>
-              <button className="ml-auto text-xs text-violet-300 hover:text-violet-100 font-medium">Enroll →</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Action buttons */}
-        <div className="absolute right-4 md:right-8 bottom-28 flex flex-col items-center gap-5 z-20">
-          <button onClick={() => handleLike(reel.id)} className="flex flex-col items-center gap-1 group">
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${liked[reel.id] ? "bg-red-500" : "bg-zinc-800/80 backdrop-blur-sm group-hover:bg-zinc-700"}`}>
-              <Heart className={`w-5 h-5 ${liked[reel.id] ? "fill-white text-white" : "text-white"}`} />
-            </div>
-            <span className="text-white text-xs">{fmt(reel.likes + (liked[reel.id] ? 1 : 0))}</span>
-          </button>
-
-          <button className="flex flex-col items-center gap-1 group">
-            <div className="w-11 h-11 rounded-full bg-zinc-800/80 backdrop-blur-sm flex items-center justify-center group-hover:bg-zinc-700 transition-all">
-              <MessageCircle className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white text-xs">{fmt(reel.comments)}</span>
-          </button>
-
-          <button className="flex flex-col items-center gap-1 group">
-            <div className="w-11 h-11 rounded-full bg-zinc-800/80 backdrop-blur-sm flex items-center justify-center group-hover:bg-zinc-700 transition-all">
-              <Share2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white text-xs">{fmt(reel.shares)}</span>
-          </button>
-
-          <button onClick={() => setSaved(prev => ({ ...prev, [reel.id]: !prev[reel.id] }))} className="flex flex-col items-center gap-1 group">
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${saved[reel.id] ? "bg-violet-600" : "bg-zinc-800/80 backdrop-blur-sm group-hover:bg-zinc-700"}`}>
-              <Bookmark className={`w-5 h-5 ${saved[reel.id] ? "fill-white text-white" : "text-white"}`} />
-            </div>
-          </button>
-
-          <button onClick={() => setMuted(m => !m)} className="flex flex-col items-center gap-1 group">
-            <div className="w-11 h-11 rounded-full bg-zinc-800/80 backdrop-blur-sm flex items-center justify-center group-hover:bg-zinc-700 transition-all">
-              {muted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
-            </div>
-          </button>
-        </div>
-
-        {/* Up/Down navigation */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-6 flex flex-col items-center gap-2 z-20">
-          <button onClick={() => go(-1)} disabled={currentIndex === 0} className="w-9 h-9 rounded-full bg-zinc-800/80 backdrop-blur-sm flex items-center justify-center disabled:opacity-30 hover:bg-zinc-700 transition-all">
-            <ChevronUp className="w-5 h-5 text-white" />
-          </button>
-          <span className="text-zinc-500 text-xs">{currentIndex + 1} / {filtered.length}</span>
-          <button onClick={() => go(1)} disabled={currentIndex === filtered.length - 1} className="w-9 h-9 rounded-full bg-zinc-800/80 backdrop-blur-sm flex items-center justify-center disabled:opacity-30 hover:bg-zinc-700 transition-all">
-            <ChevronDown className="w-5 h-5 text-white" />
-          </button>
-        </div>
-
-        {/* Mobile category tabs */}
-        <div className="md:hidden absolute top-4 left-0 right-0 flex gap-2 px-4 z-30 overflow-x-auto scrollbar-none">
+      {/* Feed */}
+      <div className="flex-1 flex items-start justify-center overflow-hidden bg-black">
+        {/* Mobile top tabs */}
+        <div className="lg:hidden absolute top-16 left-0 right-0 z-30 px-4 py-2 flex gap-2 overflow-x-auto scrollbar-none"
+          style={{ background: "linear-gradient(180deg,rgba(0,0,0,0.9) 0%, transparent 100%)" }}>
           {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 text-xs px-3 py-1 rounded-full transition-all ${activeCategory === cat ? "bg-violet-600 text-white" : "bg-zinc-800/80 text-zinc-400 backdrop-blur-sm"}`}
-            >
+            <button key={cat} onClick={() => setActiveCategory(cat)}
+              className="flex-shrink-0 text-xs font-semibold px-4 py-1.5 rounded-full transition-all"
+              style={activeCategory === cat
+                ? { background: "#fff", color: "#000" }
+                : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }
+              }>
               {cat}
             </button>
+          ))}
+        </div>
+
+        {/* Snap scroll container */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="w-full max-w-[430px] h-full overflow-y-scroll scrollbar-none"
+          style={{ scrollSnapType: "y mandatory" }}
+        >
+          {filtered.map((reel, i) => (
+            <ReelCard key={reel.id} reel={reel} active={i === activeIdx} />
           ))}
         </div>
       </div>

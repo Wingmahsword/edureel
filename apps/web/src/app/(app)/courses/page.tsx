@@ -123,26 +123,25 @@ export default function CoursesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 pt-20 pb-16">
+    <div className="min-h-screen pt-20 pb-16" style={{ background: "#000" }}>
       <div className="max-w-5xl mx-auto px-4">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white mb-1">AI Learning Library</h1>
-          <p className="text-zinc-400 text-sm">Free courses from Anthropic, Microsoft, Google, Hugging Face, and more.</p>
+          <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">Learning Library</h1>
+          <p className="text-sm" style={{ color: "#666" }}>Free courses from Anthropic, Microsoft, Google, Hugging Face, and more.</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-3 mb-8">
           {[
-            { label: "Enrolled", value: enrolledIds.size, icon: <BookOpen className="w-4 h-4 text-violet-400" />, color: "border-violet-500/20 bg-violet-500/5" },
-            { label: "Completed", value: 0, icon: <Award className="w-4 h-4 text-amber-400" />, color: "border-amber-500/20 bg-amber-500/5" },
-            { label: "Credits Earned", value: 320, icon: <Zap className="w-4 h-4 text-emerald-400" />, color: "border-emerald-500/20 bg-emerald-500/5" },
+            { label: "Enrolled", value: enrolledIds.size, color: "#7c3aed" },
+            { label: "Completed", value: 0, color: "#d97706" },
+            { label: "Credits", value: 320, color: "#059669" },
           ].map(s => (
-            <div key={s.label} className={`border rounded-xl p-4 ${s.color} text-center`}>
-              <div className="flex justify-center mb-1">{s.icon}</div>
-              <p className="text-white font-bold text-xl">{s.value}</p>
-              <p className="text-zinc-500 text-xs">{s.label}</p>
+            <div key={s.label} className="rounded-2xl p-4 text-center" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
+              <p className="text-2xl font-bold text-white">{s.value}</p>
+              <p className="text-xs mt-0.5" style={{ color: s.color }}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -150,13 +149,11 @@ export default function CoursesPage() {
         {/* Filters */}
         <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-none pb-1">
           {FILTERS.map(f => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={`flex-shrink-0 text-sm px-4 py-1.5 rounded-full border transition-all ${
-                activeFilter === f ? "bg-violet-600 border-violet-600 text-white" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"
-              }`}
-            >
+            <button key={f} onClick={() => setActiveFilter(f)}
+              className="flex-shrink-0 text-sm px-4 py-1.5 rounded-full font-medium transition-all"
+              style={activeFilter === f
+                ? { background: "#fff", color: "#000" }
+                : { background: "#111", color: "#666", border: "1px solid #1a1a1a" }}>
               {f}
             </button>
           ))}
@@ -174,54 +171,61 @@ export default function CoursesPage() {
                 transition={{ delay: i * 0.06 }}
               >
                 <Link href={`/courses/${course.id}/read`}>
-                  <div className={`border rounded-2xl p-5 transition-all cursor-pointer bg-gradient-to-br ${course.gradient} ${course.border} group`}>
+                  <div className="rounded-2xl p-5 cursor-pointer group transition-all"
+                    style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "#333")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "#1a1a1a")}>
                     {/* Provider */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xl">{course.logo}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${course.providerColor}`}>{course.provider}</span>
-                      <span className="ml-auto text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">{course.price}</span>
+                    <div className="flex items-center gap-2.5 mb-4">
+                      <span className="text-2xl">{course.logo}</span>
+                      <div>
+                        <p className="text-white text-sm font-semibold leading-none">{course.provider}</p>
+                        <p className="text-xs mt-0.5" style={{ color: "#555" }}>Official Course</p>
+                      </div>
+                      <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(5,150,105,0.1)", color: "#34d399" }}>{course.price}</span>
                     </div>
 
-                    <h3 className="text-white font-bold text-base mb-2 group-hover:text-violet-300 transition-colors">{course.title}</h3>
-                    <p className="text-zinc-400 text-sm line-clamp-2 mb-4">{course.description}</p>
+                    <h3 className="text-white font-bold text-[15px] leading-snug mb-2 group-hover:text-violet-300 transition-colors">{course.title}</h3>
+                    <p className="text-sm line-clamp-2 mb-4 leading-relaxed" style={{ color: "#666" }}>{course.description}</p>
 
                     {/* Tags */}
                     <div className="flex gap-1.5 mb-4 flex-wrap">
                       {course.tags.map(tag => (
-                        <span key={tag} className="text-xs text-zinc-500 bg-zinc-800/60 px-2 py-0.5 rounded-full">{tag}</span>
+                        <span key={tag} className="text-xs px-2.5 py-1 rounded-full" style={{ background: "#1a1a1a", color: "#555" }}>{tag}</span>
                       ))}
                     </div>
 
                     {/* Meta */}
-                    <div className="flex items-center gap-4 text-xs text-zinc-500 mb-4">
-                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" />{course.chapters} chapters</span>
+                    <div className="flex items-center gap-4 text-xs mb-4" style={{ color: "#444" }}>
+                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" />{course.chapters} ch</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{course.duration}</span>
                       <span className="flex items-center gap-1"><Users className="w-3 h-3" />{(course.students / 1000).toFixed(1)}k</span>
-                      <span className="flex items-center gap-1 text-amber-400"><Star className="w-3 h-3 fill-amber-400" />{course.rating}</span>
+                      <span className="flex items-center gap-1" style={{ color: "#f59e0b" }}><Star className="w-3 h-3 fill-amber-400" />{course.rating}</span>
                     </div>
 
                     {/* Progress or Enroll */}
                     {isEnrolled ? (
                       <div>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-zinc-400">Progress</span>
-                          <span className="text-violet-400">{course.progress}%</span>
+                        <div className="flex justify-between text-xs mb-2">
+                          <span style={{ color: "#555" }}>Progress</span>
+                          <span style={{ color: "#a78bfa" }}>{course.progress}%</span>
                         </div>
-                        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-3">
-                          <div className="h-full bg-violet-600 rounded-full transition-all" style={{ width: `${course.progress}%` }} />
+                        <div className="h-0.5 rounded-full overflow-hidden mb-3" style={{ background: "#1a1a1a" }}>
+                          <div className="h-full rounded-full transition-all" style={{ width: `${course.progress}%`, background: "#7c3aed" }} />
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-violet-400 font-medium group-hover:gap-3 transition-all">
-                          <Play className="w-4 h-4 fill-violet-400" />
-                          {course.progress > 0 ? "Continue Reading" : "Start Reading"}
+                        <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#a78bfa" }}>
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          {course.progress > 0 ? "Continue" : "Start Reading"}
                           <ChevronRight className="w-4 h-4 ml-auto" />
                         </div>
                       </div>
                     ) : (
-                      <button
-                        onClick={(e) => handleEnroll(course.id, e)}
-                        className="w-full py-2 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 transition-all flex items-center justify-center gap-2"
-                      >
-                        <Zap className="w-4 h-4 text-amber-400" />Enroll Free
+                      <button onClick={(e) => handleEnroll(course.id, e)}
+                        className="w-full py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
+                        style={{ background: "#1a1a1a", color: "#fff", border: "1px solid #262626" }}
+                        onMouseEnter={e => (e.currentTarget.style.background = "#7c3aed")}
+                        onMouseLeave={e => (e.currentTarget.style.background = "#1a1a1a")}>
+                        <Zap className="w-3.5 h-3.5 text-amber-400" />Enroll Free
                       </button>
                     )}
                   </div>

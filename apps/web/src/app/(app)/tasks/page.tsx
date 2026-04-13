@@ -97,7 +97,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 pt-20 pb-12">
+    <div className="min-h-screen pt-20 pb-12" style={{ background: "#000" }}>
       <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -106,26 +106,26 @@ export default function TasksPage() {
             <p className="text-zinc-400 text-sm mt-1">Complete tasks to earn AI credits and unlock advanced models.</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2">
+            <div className="flex items-center gap-2 rounded-xl px-4 py-2.5" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
               <Zap className="w-4 h-4 text-amber-400" />
-              <span className="text-amber-400 font-bold text-lg">{credits.toLocaleString()}</span>
-              <span className="text-zinc-400 text-sm">credits</span>
+              <span className="text-white font-bold text-lg">{credits.toLocaleString()}</span>
+              <span className="text-xs" style={{ color: "#555" }}>credits</span>
             </div>
-            <div className="flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 rounded-xl px-4 py-2">
+            <div className="flex items-center gap-2 rounded-xl px-4 py-2.5" style={{ background: "#111", border: "1px solid #1a1a1a" }}>
               <Trophy className="w-4 h-4 text-violet-400" />
-              <span className="text-violet-400 font-bold">{completed.size}</span>
-              <span className="text-zinc-400 text-sm">done</span>
+              <span className="text-white font-bold">{completed.size}</span>
+              <span className="text-xs" style={{ color: "#555" }}>done</span>
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="mb-8 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-zinc-400">Progress</span>
-            <span className="text-zinc-300">{completed.size}/{TASKS.length} tasks · <span className="text-amber-400">+{totalEarnable} credits remaining</span></span>
+        <div className="mb-8 rounded-2xl p-4" style={{ background: "#0d0d0d", border: "1px solid #1a1a1a" }}>
+          <div className="flex justify-between text-xs mb-3">
+            <span style={{ color: "#666" }}>Progress</span>
+            <span style={{ color: "#a78bfa" }}>{completed.size}/{TASKS.length} tasks · +{totalEarnable} credits</span>
           </div>
-          <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="h-0.5 rounded-full overflow-hidden" style={{ background: "#1a1a1a" }}>
             <motion.div
               className="h-full bg-gradient-to-r from-violet-600 to-amber-500 rounded-full"
               initial={{ width: 0 }}
@@ -141,11 +141,10 @@ export default function TasksPage() {
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className={`flex-shrink-0 text-sm px-4 py-1.5 rounded-full border transition-all ${
-                activeFilter === cat
-                  ? "bg-violet-600 border-violet-600 text-white"
-                  : "border-zinc-700 text-zinc-400 hover:border-zinc-500"
-              }`}
+              className="flex-shrink-0 text-sm px-4 py-1.5 rounded-full font-medium transition-all"
+            style={activeFilter === cat
+              ? { background: "#fff", color: "#000" }
+              : { background: "#111", color: "#666", border: "1px solid #1a1a1a" }}
             >
               {cat}
             </button>
@@ -162,11 +161,15 @@ export default function TasksPage() {
                 layout
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`relative border rounded-xl p-5 transition-all cursor-pointer ${
-                  isDone ? "border-emerald-500/30 bg-emerald-500/5" :
-                  task.locked ? "border-zinc-700 bg-zinc-900/50 opacity-60 cursor-not-allowed" :
-                  COLOR_MAP[task.color]
-                }`}
+                className="relative rounded-2xl p-5 transition-all cursor-pointer"
+                style={isDone
+                  ? { background: "#0a1a0f", border: "1px solid #1a3a1f" }
+                  : task.locked
+                  ? { background: "#0a0a0a", border: "1px solid #1a1a1a", opacity: 0.5, cursor: "not-allowed" }
+                  : { background: "#0d0d0d", border: "1px solid #1a1a1a" }
+                }
+                onMouseEnter={e => { if (!task.locked && !isDone) (e.currentTarget as HTMLElement).style.borderColor = "#333"; }}
+                onMouseLeave={e => { if (!task.locked && !isDone) (e.currentTarget as HTMLElement).style.borderColor = "#1a1a1a"; }}
                 onClick={() => !task.locked && !isDone && setActiveTask(task)}
               >
                 {task.locked && (
@@ -224,7 +227,8 @@ export default function TasksPage() {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 40, opacity: 0 }}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="rounded-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto"
+            style={{ background: "#0d0d0d", border: "1px solid #262626" }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
